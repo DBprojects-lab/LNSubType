@@ -1,3 +1,4 @@
+library(ggvenn)
 
 GeneInfo=read.csv("D:/06_CRC/bulkRNAseq/BeiJingSample/GeneInformation.txt",sep="\t",header=T,row.names=1)
 protein_coding_genes=GeneInfo[GeneInfo$gene_biotype=="protein_coding","gene_name"]
@@ -11,11 +12,8 @@ NLNC4vsC1_DEG$threshold=ifelse(NLNC4vsC1_DEG$padj>0.01|abs(NLNC4vsC1_DEG$log2Fol
 
 PosvsNeg_DEG=PosvsNeg_DEG[intersect(rownames(PosvsNeg_DEG),protein_coding_genes),]
 NLNC4vsC1_DEG=NLNC4vsC1_DEG[intersect(rownames(NLNC4vsC1_DEG),protein_coding_genes),]
-
-
 sigPos=PosvsNeg_DEG[!PosvsNeg_DEG$threshold%in%"NoSig",]
 sigC4=NLNC4vsC1_DEG[!NLNC4vsC1_DEG$threshold%in%"NoSig",]
-library(ggvenn)
 sigPosList=split(rownames(sigPos),sigPos$threshold)
 sigC4List=split(rownames(sigC4),sigC4$threshold)
 DEGList=c(sigPosList,sigC4List)
@@ -33,22 +31,11 @@ DownInPosSep=setdiff(sigPosList$DownInPos,rownames(sigC4))
 SharedUp=intersect(sigC4List$UpInNLNC4,sigPosList$UpInPos)
 SharedDown=intersect(sigC4List$DownInNLNC4,sigPosList$DownInPos)
 
-DEGList=rbind(toString(UpInNLNC4Spe),toString(UpInPosSep),toString(SharedUp),
-              toString(DownInNLNC4Spe),toString(DownInPosSep),toString(SharedDown))
-rownames(DEGList)=c("UpInNLNC4","UpInPos","UpInBoth","DownInNLNC4","DownInPos","DownInBoth")
-write.table(DEGList[c(1,2,3),],file="D:/06_CRC/bulkRNAseq/BeiJingSample/DEG/metascape/NLNC4AndPos.Up.combined.txt",col.names=F,quote=F,sep="\t")
-write.table(DEGList[c(4,5,6),],file="D:/06_CRC/bulkRNAseq/BeiJingSample/DEG/metascape/NLNC4AndPos.Down.combined.txt",col.names=F,quote=F,sep="\t")
-
-
-
 write.table(SharedUp,file="D:/06_CRC/bulkRNAseq/BeiJingSample/DEG/metascape/NLNC4AndPos.SahredUp.txt",row.names=F,col.names=F,quote=F,sep="\t")
 write.table(SharedDown,file="D:/06_CRC/bulkRNAseq/BeiJingSample/DEG/metascape/NLNC4AndPos.SahredDown.txt",row.names=F,col.names=F,quote=F,sep="\t")
-
 write.table(UpInNLNC4Spe,file="D:/06_CRC/bulkRNAseq/BeiJingSample/DEG/metascape/NLNC4AndPos.UpInNLNC4SpeTop3000.txt",row.names=F,col.names=F,quote=F,sep="\t")
 write.table(DownInNLNC4Spe,file="D:/06_CRC/bulkRNAseq/BeiJingSample/DEG/metascape/NLNC4AndPos.DownInNLNC4Sep.txt",row.names=F,col.names=F,quote=F,sep="\t")
-
 write.table(UpInPosSep,file="D:/06_CRC/bulkRNAseq/BeiJingSample/DEG/metascape/NLNC4AndPos.UpInPos4Spe.txt",row.names=F,col.names=F,quote=F,sep="\t")
-
 
 
 data=read.table("D:/06_CRC/bulkRNAseq/BeiJingSample/DEG/metascape/NLNC4AndPos.UpInPos4Spe/NLNC4AndPos.UpInPos4Spe.Go.txt",header=T,sep="\t")
