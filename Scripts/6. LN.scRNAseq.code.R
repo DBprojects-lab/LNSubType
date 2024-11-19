@@ -1,11 +1,3 @@
-
-
-salloc -N 1 -n 32 -p 128c512g-BIO --comment=lkn_lab
-ssh cpu5
-source /opt/app/anaconda3/bin/activate
-conda activate Seurat-4.4.0
-
-R
 library(Seurat) #4.4.0
 library(harmony) #1.2.1
 library(plyr)
@@ -15,7 +7,7 @@ library(ggplot2)
 library(scCustomize)
 
 setwd("/groups/g900008/home/bixiaoman/Projects/LNCRC/scRNAseq")
-
+#CRCLD.integrated.cellType.rds and merge.rds were procecced using seurat with default pipline
 PLNSample=readRDS("CRCLD.integrated.cellType.rds")
 #21633 features across 84623 samples within 1 assay
 NuoHeZhiYinMergeSample=readRDS("merge.rds")
@@ -23,9 +15,11 @@ NuoHeZhiYinMergeSample=readRDS("merge.rds")
 LNSample=subset(NuoHeZhiYinMergeSample,Type=="LN")
 #32245 features across 422136 samples within 1 assay
 
+#three platform
 PLNSample$platform="10XGenomics"
 PLNSample$Groups="NA"
 PLNSample$Type=ifelse(PLNSample$Sample%in%c("CRC1_T","CRC2_T","CRC3_T"),"Tissue","LN")
+#treatmetn infor 
 merge$Treatment=ifelse(merge$platform=="NuoHe",merge$Group,merge$Groups)
 
 PLNSample@meta.data=PLNSample@meta.data[,c("Sample","nCount_RNA","nFeature_RNA","Treatment","Type","platform","cellType")]
@@ -35,11 +29,9 @@ LNSample$cellType=LNSample$Celltype
 LNSample@meta.data=LNSample@meta.data[,c("Sample","nCount_RNA","nFeature_RNA","Treatment","Type","platform","cellType")]
 
 LNCombined=merge(LNSample,PLNSample)
-
-
 rm(list=ls())
 gc()
-LNCombined=readRDS("LN.Combined.raw.rds")
+
 #32270 features across 506759 samples within 1 assay
 options(future.globals.maxSize = 1000 * 1024^3)
 LNCombined <- NormalizeData(LNCombined, normalization.method = "LogNormalize", scale.factor = 10000)
