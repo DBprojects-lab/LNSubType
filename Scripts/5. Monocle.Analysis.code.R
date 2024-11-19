@@ -1,7 +1,3 @@
-salloc -N 1 -n 32 -p 128c1t --comment=lkn_lab
-source /opt/app/anaconda3/bin/activate
-conda activate Seurat-4.4.0
-
 library(Seurat)
 library(monocle)
 library(RColorBrewer)
